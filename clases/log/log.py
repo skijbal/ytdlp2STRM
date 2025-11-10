@@ -36,9 +36,9 @@ class log:
                 file.seek(0)
                 file.truncate()
 
-                # Calcular el límite de tiempo (7 días atrás)
+                # Calcular el límite de tiempo (2 días atrás)
                 now = datetime.datetime.now()
-                cutoff = now - datetime.timedelta(days=7)
+                cutoff = now - datetime.timedelta(days=2)
 
                 for line in lines:
                     try:

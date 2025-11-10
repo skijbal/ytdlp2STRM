@@ -13,6 +13,7 @@ from clases.worker import worker as w
 from clases.folders import folders as f
 from clases.nfo import nfo as n
 from clases.log import log as l
+from clases.jellyfin_notifier.jellyfin_notifier import JellyfinNotifier
 
 
 ## -- TWITCH CLASS
@@ -252,6 +253,11 @@ except:
     cookies = ''
     cookie_value = ''
 
+try:
+    episode_format = config["episode_format"]
+except:
+    episode_format = 'sequential'
+
 # Función helper para agregar cookies a comandos
 def set_cookies_to_command(command):
     if cookies and cookie_value and cookies.strip() and cookie_value.strip():
@@ -320,8 +326,6 @@ def to_strm(method):
             {
                 "title" : twitch.channel_name,
                 "plot" : "",
-                "season" : "1",
-                "episode" : "-1",
                 "landscape" : twitch.images['landscape'],
                 "poster" : twitch.images['poster'],
                 "studio" : "Twitch"
@@ -476,7 +480,8 @@ def to_strm(method):
                     folder_full_path = "{}/{}/{}".format(media_folder, channel_folder, season_folder)
                     
                     # Format title with episode number
-                    formatted_title = format_episode_title(video_name, folder_full_path)
+                    use_mmdd = (episode_format.lower() == 'mmdd')
+                    formatted_title = format_episode_title(video_name, folder_full_path, upload_date, use_mmdd)
                     
                     file_path = "{}/{}/{}/{}.{}".format(
                         media_folder,
@@ -537,6 +542,11 @@ def to_strm(method):
                             file_path, 
                             file_content
                         )
+        
+        # Notify Jellyfin/Emby after processing all videos for this channel
+        jellyfin_notifier = JellyfinNotifier(config)
+        if jellyfin_notifier.enabled:
+            jellyfin_notifier.notify_new_content(f"{media_folder}/{sanitize(twitch.channel)}")
         ## --END
     
     return True 

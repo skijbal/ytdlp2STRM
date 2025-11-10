@@ -77,8 +77,6 @@ class nfo:
 <tvshow>
     <title>{title}</title>
     <plot><![CDATA[{plot}]]></plot>
-    <season>{season}</season>
-    <episode>{episode}</episode>
     <thumb spoof="" cache="" aspect="landscape" preview="{landscape}">{landscape}</thumb>
     <thumb spoof="" cache="" aspect="poster" preview="{poster}">{poster}</thumb>
     <studio>{studio}</studio>

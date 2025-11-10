@@ -4,5 +4,10 @@
     "days_dateafter" : "10", 
     "videos_limit" : "10",
     "cookies" : "",
-    "cookie_value" : ""
+    "cookie_value" : "",
+    "episode_format" : "sequential",
+    "jellyfin_integration" : "False",
+    "jellyfin_base_url" : "http://localhost:8096",
+    "jellyfin_api_key" : "",
+    "jellyfin_library_name" : "Twitch"
 }

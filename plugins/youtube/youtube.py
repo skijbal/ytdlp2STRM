@@ -16,6 +16,7 @@ from clases.worker import worker as w
 from clases.folders import folders as f
 from clases.nfo import nfo as n
 from clases.log import log as l
+from clases.jellyfin_notifier.jellyfin_notifier import JellyfinNotifier
 
 recent_requests = TTLCache(maxsize=200, ttl=30)
 
@@ -46,6 +47,11 @@ try:
     lang = config["lang"]
 except:
     lang = 'en'
+
+try:
+    episode_format = config["episode_format"]
+except:
+    episode_format = 'sequential'
 
 source_platform = "youtube"
 host = ytdlp2strm_config['ytdlp2strm_host']
@@ -90,7 +96,11 @@ class Youtube:
                 if not 'www.youtube' in self.channel_url:
                     self.channel_url = f'https://www.youtube.com/playlist?list={self.channel_url}'
             else:
-                if not 'www.youtube' in self.channel_url:
+                # Normalize URL - avoid double https://
+                if self.channel_url.startswith('http'):
+                    # Already a full URL, use as-is
+                    pass
+                elif not 'www.youtube' in self.channel_url:
                     self.channel_url = f'https://www.youtube.com/{self.channel_url}'
 
 
@@ -121,9 +131,14 @@ class Youtube:
             return self.get_list_videos()
 
         else:
-            self.channel_url = self.channel
-            if not 'www.youtube' in self.channel:
+            # Normalize URL - avoid double https://
+            if self.channel.startswith('http'):
+                # Already a full URL, use as-is
+                self.channel_url = self.channel
+            elif not 'www.youtube' in self.channel:
                 self.channel_url = f'https://www.youtube.com/{self.channel}'
+            else:
+                self.channel_url = self.channel
 
             self.channel_name = self.get_channel_name()
             self.channel_description = self.get_channel_description()
@@ -707,8 +722,6 @@ def to_strm(method):
                 {
                     "title" : channel_name,
                     "plot" : channel_description.replace('\n', ' <br/>'),
-                    "season" : "1",
-                    "episode" : "-1",
                     "landscape" : yt.channel_landscape,
                     "poster" : yt.channel_poster,
                     "studio" : "Youtube"
@@ -742,7 +755,8 @@ def to_strm(method):
                 folder_full_path = "{}/{}/{}".format(media_folder, channel_folder, season_folder)
                 
                 # Format title with episode number
-                formatted_title = format_episode_title(video_name, folder_full_path)
+                use_mmdd = (episode_format.lower() == 'mmdd')
+                formatted_title = format_episode_title(video_name, folder_full_path, upload_date, use_mmdd)
                 
                 file_path = "{}/{}/{}/{}.{}".format(
                     media_folder,
@@ -816,8 +830,6 @@ def to_strm(method):
                         {
                             "title" : channel_name,  # Use friendly name instead of @-handle
                             "plot" : channel_description.replace('\n', ' <br/>'),
-                            "season" : "1",
-                            "episode" : "-1",
                             "landscape" : channel_landscape,
                             "poster" : channel_poster,
                             "studio" : "Youtube"
@@ -855,6 +867,11 @@ def to_strm(method):
                         file_path, 
                         file_content
                     )
+            
+            # Notify Jellyfin/Emby after processing all videos for this channel
+            jellyfin_notifier = JellyfinNotifier(config)
+            if jellyfin_notifier.enabled:
+                jellyfin_notifier.notify_new_content(f"{media_folder}/{channel_folder}")
         else:
             log_text = (" no videos detected...") 
             l.log("youtube", log_text)

@@ -7,5 +7,10 @@
     "sponsorblock_cats" : "sponsor",
     "cookies" : "cookies-from-browser",
     "cookie_value" : "firefox",
-    "lang" : "en"
+    "lang" : "en",
+    "episode_format" : "sequential",
+    "jellyfin_integration" : "False",
+    "jellyfin_base_url" : "http://localhost:8096",
+    "jellyfin_api_key" : "",
+    "jellyfin_library_name" : "Youtube"
 }
