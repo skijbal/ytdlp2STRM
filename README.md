@@ -1,6 +1,7 @@
 # Clone and run docker build.  The Dockerfile and youtube.py files have been modified.  This will pull the most current yt-dlp and install Deno.
-Docker file -> added Deno
-youtube.py -> prefers English audio since it wasn't working via GUI.
+* Docker file -> added Deno
+* youtube.py -> prefers English audio since it wasn't working via GUI.
+* I've had good success in bridge mode.
 
 Below this text is a copy from the fork.
 
