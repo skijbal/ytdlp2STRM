@@ -1,3 +1,11 @@
+# Clone and run docker build.  The Dockerfile and youtube.py files have been modified.  This will pull the most current yt-dlp and install Deno.
+Docker file -> added Deno
+youtube.py -> prefers English audio since it wasn't working via GUI.
+
+Below this text is a copy from the fork.
+
+
+
 # ytdlp2STRM
 <a href="https://www.buymeacoffee.com/fe80grau" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="width: 120px !important;" ></a>
 
