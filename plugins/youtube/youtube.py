@@ -890,7 +890,8 @@ def to_strm(method):
                 year = date.year
                 youtube_channel = video['uploader_id']
                 youtube_channel_folder = youtube_channel.replace('/user/', '@').replace('/streams', '')
-                file_content = f'http://{host}:{port}/{source_platform}/{method}/{video_id}'
+                file_content = f'http://{host}:{port}/{source_platform}/bridge/{video_id}'
+                # Original line - file_content = f'http://{host}:{port}/{source_platform}/{method}/{video_id}'
 
                 channel_folder = sanitize(
                     "{} [{}]".format(
